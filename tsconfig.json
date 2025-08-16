@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+    /* Projects */
+    // "incremental": true,                             °
+    /* Language and Environment */
+    "target": "es2016", /* Set the JavaScript language version for emitted JavaScript */
+    "jsx": "preserve", /* Required for Next.js JSX/TSX files */
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ], /* Include DOM and ESNext for browser and Next.js compatibility *//* Modules */
+    "module": "esnext", /* Use ESNext for Next.js, compatible with modern bundlers */
+    "moduleResolution": "bundler", /* Recommended for Next.js, works with Webpack */
+    "baseUrl": ".", /* Enable absolute imports */
+    "paths": { /* Map aliases for easier imports */
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ]
+    },
+    "rootDir": "./", /* Source files root */
+    "allowJs": true, /* Allow JavaScript files in Next.js */
+    "resolveJsonModule": true, /* Enable importing JSON files */
+    "esModuleInterop": true, /* Support CommonJS interop */
+    "forceConsistentCasingInFileNames": true, /* Ensure consistent import casing *//* Type Checking */
+    "strict": true, /* Enable strict type checking */
+    "noImplicitAny": true, /* Prevent implicit 'any' types */
+    "strictNullChecks": true, /* Enforce null/undefined checks */
+    "noUnusedLocals": true, /* Report unused local variables */
+    "noUnusedParameters": true, /* Report unused parameters */
+    "noImplicitReturns": true, /* Ensure functions return explicitly */
+    "noFallthroughCasesInSwitch": true, /* Prevent switch case fallthrough */
+    "skipLibCheck": true, /* Skip checking .d.ts files *//* Emit */
+    "sourceMap": true, /* Generate source maps for debugging */
+    "noEmit": true, /* Next.js handles emission, no direct JS output */
+    "isolatedModules": true, /* Ensure files are treated as modules */
+    "allowSyntheticDefaultImports": true /* Allow default imports from CommonJS */,
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ], /* Include TS, TSX, and Next.js types */
+  "exclude": [
+    "node_modules",
+    "dist"
+  ] /* Exclude node_modules and compiled output */
+}
