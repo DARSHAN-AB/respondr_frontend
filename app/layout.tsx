@@ -17,6 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="fast2sms" content="q5QgRykcoSsAeiGIZJxR2LgEeRejf3Lg" />
+      </head>
       <body className={inter.className}>
         <ClientWrapper>{children}</ClientWrapper>
       </body>
