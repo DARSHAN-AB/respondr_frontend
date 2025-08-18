@@ -8,6 +8,11 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Respondr",
   description: "Emergency Rescue Platform",
+  icons: {
+    icon: "/favicon.ico", // path from public/
+    shortcut: "/favicon.ico"
+    // apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
