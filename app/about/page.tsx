@@ -136,12 +136,12 @@ export default function AboutPage() {
               >
                 <img
                   src="/veda.jpg?height=300&width=300"
-                  alt="Founder 1"
+                  alt="Founder 3"
                   className="w-32 h-32 rounded-full mx-auto mb-4 object-cover cursor-pointer"
                   onClick={() => handleImageClick("/veda.jpg?height=300&width=300")}
                 />
                 <h3 className="text-xl font-semibold mb-1">Veda HS</h3>
-                <p className="text-red-600 font-medium mb-2">Managing Director</p>
+                <p className="text-red-600 font-medium mb-2">Co-Founder & MD</p>
                 <p className="text-gray-600 mb-4">
                   A dedicated leader passionate about using machine learning to improve healthcare, guiding the team with a clear vision for innovation.
                 </p>
