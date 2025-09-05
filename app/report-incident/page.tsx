@@ -29,6 +29,7 @@ export default function ReportIncidentPage() {
   const { toast } = useToast();
   const { token } = useAuth();
 
+  // Get location when page loads
   useEffect(() => {
     if (!token) {
       router.push('/login');
@@ -112,19 +113,22 @@ export default function ReportIncidentPage() {
       formData.append('description', description);
       formData.append('photo', photoFile);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/report/create`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send report');
-      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/report/create`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData, // ✅ let browser set Content-Type
+        }
+      );
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send report');
+      }
 
       toast({
         title: 'Report Sent',
