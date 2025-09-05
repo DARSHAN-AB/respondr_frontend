@@ -88,15 +88,16 @@ export default function AboutPage() {
                 <h3 className="text-xl font-semibold mb-1">Darshan AB</h3>
                 <p className="text-red-600 font-medium mb-2">Founder & CEO</p>
                 <p className="text-gray-600 mb-4">
-                  A visionary leader with a deep passion for revolutionizing healthcare through machine learning.
-                <div className="flex justify-center space-x-3">
-                  <a href="https://www.linkedin.com/in/darshan-ab-/" target="_blank" rel="noopener noreferrer">
-                    <img src="/linkedin.png" alt="Linkedin" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
-                  </a>
-                  <a href="https://github.com/DARSHAN-AB" target="_blank" rel="noopener noreferrer">
-                    <img src="/github_logo.png" alt="GitHub" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
-                  </a>
-                </div>
+                A visionary leader with a deep passion for revolutionizing healthcare through machine learning.
+              </p>
+              <div className="flex justify-center space-x-3">
+                <a href="https://www.linkedin.com/in/darshan-ab-/" target="_blank" rel="noopener noreferrer">
+                  <img src="/linkedin.png" alt="Linkedin" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
+                </a>
+                <a href="https://github.com/DARSHAN-AB" target="_blank" rel="noopener noreferrer">
+                  <img src="/github_logo.png" alt="GitHub" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
+                </a>
+              </div>
               </motion.div>
 
               <motion.div
