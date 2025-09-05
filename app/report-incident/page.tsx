@@ -112,7 +112,7 @@ export default function ReportIncidentPage() {
       formData.append('description', description);
       formData.append('photo', photoFile);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports/create`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reports/create`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
