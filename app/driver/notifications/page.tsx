@@ -54,6 +54,9 @@ interface User {
   userId: string
 }
 
+// Centralized API Base URL (Azure)
+const API_BASE_URL = "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api"
+
 export default function DriverNotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const { toast } = useToast()
@@ -62,7 +65,7 @@ export default function DriverNotificationsPage() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/notifications")
+        const response = await fetch(`${API_BASE_URL}/notifications`)
         if (!response.ok) {
           throw new Error("Failed to fetch notifications")
         }
@@ -119,7 +122,7 @@ export default function DriverNotificationsPage() {
     }
 
     // Step 1: Mark driver as busy
-    const markBusyResponse = await fetch("http://localhost:3001/api/driver/mark-busy", {
+    const markBusyResponse = await fetch(`${API_BASE_URL}/driver/mark-busy`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,7 +142,7 @@ export default function DriverNotificationsPage() {
 
     // Step 2: Assign report
     const currentTime = new Date().toISOString();
-    const assignReportResponse = await fetch("http://localhost:3001/api/driver/assign-report", {
+    const assignReportResponse = await fetch(`${API_BASE_URL}/driver/assign-report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -160,7 +163,7 @@ export default function DriverNotificationsPage() {
     const assignmentId = assignReportData.assignmentId;
 
     // Step 3: Dispatch
-    const dispatchResponse = await fetch("http://localhost:3001/api/driver/dispatch", {
+    const dispatchResponse = await fetch(`${API_BASE_URL}/driver/dispatch`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -219,7 +222,7 @@ export default function DriverNotificationsPage() {
 
     try {
       // Step 1: Mark job as completed
-      const completeResponse = await fetch("http://localhost:3001/api/driver/mark-completed", {
+      const completeResponse = await fetch(`${API_BASE_URL}/driver/mark-completed`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -237,7 +240,7 @@ export default function DriverNotificationsPage() {
 
       // Step 2: Update dispatch record
       const currentTime = new Date().toISOString()
-      const dispatchResponse = await fetch("http://localhost:3001/api/driver/dispatch", {
+      const dispatchResponse = await fetch(`${API_BASE_URL}/driver/dispatch`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -277,7 +280,7 @@ export default function DriverNotificationsPage() {
   const handleRejectJob = async (id: string) => {
     try {
       // Step 1: Reject job
-      const rejectResponse = await fetch("http://localhost:3001/api/driver/reject-job", {
+      const rejectResponse = await fetch(`${API_BASE_URL}/driver/reject-job`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

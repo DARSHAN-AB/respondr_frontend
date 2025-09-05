@@ -26,6 +26,9 @@ const MapView = dynamic(() => import("@/components/map-view").then((mod) => mod.
   ssr: false,
 })
 
+// Centralized API Base URL (Azure)
+const API_BASE_URL = "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api"
+
 export default function DriverDashboardPage() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [isLocating, setIsLocating] = useState(false)
@@ -34,7 +37,9 @@ export default function DriverDashboardPage() {
   const [showNotificationDialog, setShowNotificationDialog] = useState(false)
   const [currentNotification, setCurrentNotification] = useState<any>(null)
   const [showVerificationDialog, setShowVerificationDialog] = useState(false)
-  const [verificationStatus, setVerificationStatus] = useState<"not_submitted" | "pending" | "accepted" | "rejected" | null>(null)
+  const [verificationStatus, setVerificationStatus] = useState<
+    "not_submitted" | "pending" | "accepted" | "rejected" | null
+  >(null)
 
   const router = useRouter()
   const { toast } = useToast()
@@ -44,12 +49,11 @@ export default function DriverDashboardPage() {
     // Fetch emergency alerts
     const fetchEmergencyAlerts = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/emergency-alerts")
-        if (!response.ok) {
-          throw new Error("Failed to fetch emergency alerts")
-        }
+        const response = await fetch(`${API_BASE_URL}/emergency-alerts`)
+        if (!response.ok) throw new Error("Failed to fetch emergency alerts")
+
         const data = await response.json()
-        
+
         // Check for duplicate IDs
         const idSet = new Set()
         data.notifications.forEach((notification: any) => {
@@ -106,7 +110,6 @@ export default function DriverDashboardPage() {
   }
 
   const handleAcceptJob = async () => {
-    // Check if driver is online
     if (driverStatus !== "available") {
       toast({
         variant: "destructive",
@@ -127,11 +130,9 @@ export default function DriverDashboardPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/driver/mark-busy", {
+      const response = await fetch(`${API_BASE_URL}/driver/mark-busy`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.userId,
           latitude: location.lat,
@@ -140,9 +141,7 @@ export default function DriverDashboardPage() {
         }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to update busy status.")
-      }
+      if (!response.ok) throw new Error("Failed to update busy status.")
 
       setDriverStatus("busy")
       setNotifications((prev) =>
@@ -150,50 +149,36 @@ export default function DriverDashboardPage() {
       )
       setShowNotificationDialog(false)
 
-      // Open Google Maps in a new tab with the report's coordinates
       const { lat, lng } = currentNotification.sender.location
-      const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`
-      window.open(googleMapsUrl, "_blank")
+      window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank")
 
       toast({
         title: "Job Accepted",
-        description: "You have accepted the emergency request. Google Maps has been opened with the location.",
+        description: "You have accepted the emergency request. Google Maps has been opened.",
       })
     } catch (error: any) {
       console.error("Error accepting job:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while accepting the job.",
-      })
+      toast({ variant: "destructive", title: "Error", description: error.message })
     }
   }
 
   const handleCompleteJob = async () => {
     if (!user?.userId || !currentNotification) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Missing user authentication or notification data.",
-      })
+      toast({ variant: "destructive", title: "Error", description: "Missing user or notification." })
       return
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/driver/mark-completed", {
+      const response = await fetch(`${API_BASE_URL}/driver/mark-completed`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: user.userId,
           emergencyId: currentNotification.id,
         }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to mark job as completed.")
-      }
+      if (!response.ok) throw new Error("Failed to mark job as completed.")
 
       setDriverStatus("available")
       setNotifications((prev) =>
@@ -201,84 +186,53 @@ export default function DriverDashboardPage() {
       )
       setShowNotificationDialog(false)
 
-      toast({
-        title: "Job Completed",
-        description: "The emergency job has been marked as completed. You are now available.",
-      })
+      toast({ title: "Job Completed", description: "The emergency job has been marked as completed." })
     } catch (error: any) {
       console.error("Error completing job:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while completing the job.",
-      })
+      toast({ variant: "destructive", title: "Error", description: error.message })
     }
   }
 
   const handleRejectJob = async () => {
     if (!user?.userId || !currentNotification) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Missing user authentication or notification data.",
-      })
+      toast({ variant: "destructive", title: "Error", description: "Missing user or notification." })
       return
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/driver/reject-job", {
+      const response = await fetch(`${API_BASE_URL}/driver/reject-job`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emergencyId: currentNotification.id,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emergencyId: currentNotification.id }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to reject job.")
-      }
+      if (!response.ok) throw new Error("Failed to reject job.")
 
       setShowNotificationDialog(false)
       setNotifications((prev) =>
         prev.map((n) => (n.id === currentNotification.id ? { ...n, status: "rejected" } : n)),
       )
 
-      toast({
-        title: "Job Rejected",
-        description: "You have rejected the emergency request.",
-      })
+      toast({ title: "Job Rejected", description: "You have rejected the emergency request." })
     } catch (error: any) {
       console.error("Error rejecting job:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while rejecting the job.",
-      })
+      toast({ variant: "destructive", title: "Error", description: error.message })
     }
   }
 
   const handleGoOnline = async () => {
     if (!user?.userId) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "User not authenticated. Please log in again.",
-      })
+      toast({ variant: "destructive", title: "Error", description: "User not authenticated." })
       return
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/verification-status/${user.userId}`)
+      const response = await fetch(`${API_BASE_URL}/verification-status/${user.userId}`)
       const contentType = response.headers.get("content-type")
-
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error(`Received non-JSON response from server (status: ${response.status})`)
-      }
+      if (!contentType?.includes("application/json"))
+        throw new Error(`Received non-JSON response (status: ${response.status})`)
 
       const data = await response.json()
-
       if (response.ok) {
         const status = data.status
         setVerificationStatus(status)
@@ -293,11 +247,9 @@ export default function DriverDashboardPage() {
             return
           }
 
-          const updateRes = await fetch("http://localhost:3001/api/driver/update-status", {
+          const updateRes = await fetch(`${API_BASE_URL}/driver/update-status`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               userId: user.userId,
               latitude: location.lat,
@@ -306,76 +258,43 @@ export default function DriverDashboardPage() {
             }),
           })
 
-          if (!updateRes.ok) {
-            throw new Error("Failed to update driver status.")
-          }
+          if (!updateRes.ok) throw new Error("Failed to update driver status.")
 
           setDriverStatus("available")
-          toast({
-            title: "You are now Online",
-            description: "You are marked as available for emergencies.",
-          })
+          toast({ title: "You are now Online", description: "You are marked as available." })
         } else {
           setShowVerificationDialog(true)
         }
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: data.error || `Failed to fetch verification status (status: ${response.status})`,
-        })
+        toast({ variant: "destructive", title: "Error", description: data.error })
       }
     } catch (error: any) {
       console.error("Error checking verification status:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while checking verification status.",
-      })
+      toast({ variant: "destructive", title: "Error", description: error.message })
     }
   }
 
   const handleGoOffline = async () => {
     if (!user?.userId) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "User not authenticated. Please log in again.",
-      })
+      toast({ variant: "destructive", title: "Error", description: "User not authenticated." })
       return
     }
 
     try {
-      const response = await fetch("http://localhost:3001/api/driver/go-offline", {
+      const response = await fetch(`${API_BASE_URL}/driver/go-offline`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.userId }),
       })
 
-      if (!response.ok) {
-        throw new Error(`Failed to set offline status (status: ${response.status})`)
-      }
+      if (!response.ok) throw new Error(`Failed to set offline status (status: ${response.status})`)
 
       setDriverStatus("offline")
-      toast({
-        title: "You are now Offline",
-        description: "You will no longer receive emergency requests.",
-      })
+      toast({ title: "You are now Offline", description: "You will no longer receive requests." })
     } catch (error: any) {
       console.error("Error going offline:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while going offline.",
-      })
+      toast({ variant: "destructive", title: "Error", description: error.message })
     }
-  }
-
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp)
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
 
   const getTimeSince = (timestamp: string) => {
@@ -383,14 +302,11 @@ export default function DriverDashboardPage() {
     const now = new Date()
     const diffMs = now.getTime() - date.getTime()
     const diffMins = Math.floor(diffMs / 60000)
-
     if (diffMins < 1) return "Just now"
     if (diffMins === 1) return "1 minute ago"
     if (diffMins < 60) return `${diffMins} minutes ago`
-
     const diffHours = Math.floor(diffMins / 60)
-    if (diffHours === 1) return "1 hour ago"
-    return `${diffHours} hours ago`
+    return diffHours === 1 ? "1 hour ago" : `${diffHours} hours ago`
   }
 
   return (

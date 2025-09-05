@@ -88,8 +88,7 @@ export default function AboutPage() {
                 <h3 className="text-xl font-semibold mb-1">Darshan AB</h3>
                 <p className="text-red-600 font-medium mb-2">Founder & CEO</p>
                 <p className="text-gray-600 mb-4">
-                  A visionary leader with a deep passion for revolutionizing healthcare through machine learning. Specializes in leveraging AI to create groundbreaking, innovative solutions that transform lives.
-                </p>
+                  A visionary leader with a deep passion for revolutionizing healthcare through machine learning.
                 <div className="flex justify-center space-x-3">
                   <a href="https://www.linkedin.com/in/darshan-ab-/" target="_blank" rel="noopener noreferrer">
                     <img src="/linkedin.png" alt="Linkedin" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
@@ -114,7 +113,7 @@ export default function AboutPage() {
                 <h3 className="text-xl font-semibold mb-1">Harsha Patil</h3>
                 <p className="text-red-600 font-medium mb-2">Co-Founder & CFO</p>
                 <p className="text-gray-600 mb-4">
-                  A strategic thinker with a strong focus on mobile application and frontend development, driving innovative digital solutions with a keen business acumen.
+                  A strategic thinker with a strong focus on mobile application, driving innovative digital solutions with a keen business acumen.
                 </p>
                 <div className="flex justify-center space-x-3">
                   <a href="https://harshapatil.netlify.app/" target="_blank" rel="noopener noreferrer">

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Camera, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
 import { SOSButton } from "@/components/sos-button"
 import { useToast } from "@/hooks/use-toast"
 
@@ -22,7 +22,6 @@ export default function DashboardPage() {
   const { toast } = useToast()
 
   useEffect(() => {
-    // Get user's location when the dashboard loads
     if (navigator.geolocation) {
       setIsLocating(true)
       navigator.geolocation.getCurrentPosition(
@@ -49,7 +48,6 @@ export default function DashboardPage() {
       )
     }
 
-    // Hide welcome message after 5 seconds
     const timer = setTimeout(() => {
       setShowWelcome(false)
     }, 5000)
@@ -68,9 +66,12 @@ export default function DashboardPage() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-gray-50">
+        {/* Sidebar overlays content on mobile */}
         <AppSidebar />
-        <div className="flex-1">
-          <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-white/80 backdrop-blur-md px-6">
+
+        {/* SidebarInset ensures map + content shrink properly when sidebar open on larger screens */}
+        <SidebarInset className="flex-1 flex flex-col">
+          <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-white/80 backdrop-blur-md px-4 sm:px-6">
             <SidebarTrigger />
             <div className="flex items-center gap-2">
               <div className="relative h-8 w-8 overflow-hidden rounded-full bg-red-600">
@@ -90,7 +91,7 @@ export default function DashboardPage() {
             </div>
           </header>
 
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-4 sm:p-6">
             {showWelcome && (
               <div className="mb-6 bg-white rounded-lg border border-gray-100 shadow-sm p-4 animate-fade-in-down">
                 <div className="flex items-start gap-3">
@@ -108,12 +109,17 @@ export default function DashboardPage() {
             )}
 
             <div className="grid gap-6 grid-cols-1 lg:grid-cols-4">
-              <Card className="lg:col-span-3 overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-0 h-[500px]">
-                <CardContent className="p-0 h-full">
-                  <MapView location={location} isLocating={isLocating} />
+              {/* Responsive map card */}
+              <Card className="lg:col-span-3 overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-0">
+                <CardContent className="p-0">
+                  {/* Use aspect ratio for responsive sizing */}
+                  <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] lg:h-[500px]">
+                    <MapView location={location} isLocating={isLocating} />
+                  </div>
                 </CardContent>
               </Card>
 
+              {/* Right column with actions */}
               <div className="space-y-6">
                 <SOSButton onClick={handleSOS} />
 
@@ -158,7 +164,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </main>
-        </div>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   )

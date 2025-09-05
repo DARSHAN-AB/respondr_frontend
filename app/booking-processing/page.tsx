@@ -1,7 +1,7 @@
 'use client';
 
-import { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Ambulance, MapPin, Search, CheckCircle, X } from 'lucide-react';
@@ -10,11 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/auth-context';
 
 export default function BookingProcessingPage() {
-  const router = useRouter(); // Safe to use outside Suspense as it's not client-side only
+  const router = useRouter();
   const { toast } = useToast();
   const { token } = useAuth();
 
-  // Initial check for reportId and token (server-safe)
   if (!token) {
     toast({
       variant: 'destructive',
@@ -40,7 +39,15 @@ export default function BookingProcessingPage() {
   );
 }
 
-function BookingContent({ router, toast, token }: { router: any; toast: any; token: string }) {
+function BookingContent({
+  router,
+  toast,
+  token,
+}: {
+  router: any;
+  toast: any;
+  token: string;
+}) {
   const searchParams = useSearchParams();
   const reportId = searchParams.get('reportId');
   const [currentStep, setCurrentStep] = useState(1);
@@ -69,14 +76,19 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
     // Poll report status every 5 seconds
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/booking/status/${reportId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api/booking/status/${reportId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (!response.ok) {
           throw new Error('Failed to fetch booking status');
         }
+
         const { status } = await response.json();
         if (status === 'Assigned') {
           clearInterval(pollInterval);
@@ -124,12 +136,15 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
 
     setIsCancelled(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/booking/cancel/${reportId}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api/booking/cancel/${reportId}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error('Failed to cancel booking');
       }
@@ -158,7 +173,7 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
         />
       </div>
 
-      {/* Step 1: Searching for ambulances */}
+      {/* Step 1: Searching */}
       <div
         className={`transition-all duration-300 ${
           currentStep === 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
@@ -169,8 +184,12 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
             <div className="absolute w-20 h-20 bg-blue-100 rounded-full animate-ping opacity-50"></div>
             <Search className="h-10 w-10 text-blue-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Searching for nearest ambulance</h2>
-          <p className="text-gray-600 mb-4">Locating available ambulances in your area...</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Searching for nearest ambulance
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Locating available ambulances in your area...
+          </p>
 
           <div className="w-full max-w-xs bg-blue-50 rounded-lg p-3 mb-4 relative overflow-hidden">
             <div className="flex items-start">
@@ -188,7 +207,10 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
           </div>
 
           <div className="flex space-x-1">
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '0ms' }}
+            />
             <div
               className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
               style={{ animationDelay: '300ms' }}
@@ -212,8 +234,9 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
             <Ambulance className="h-10 w-10 text-green-600" />
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Ambulances Found!</h2>
-          <p className="text-gray-600 mb-4">We found {ambulancesFound} ambulances near your location</p>
-
+          <p className="text-gray-600 mb-4">
+            We found {ambulancesFound} ambulances near your location
+          </p>
           <div className="w-full max-w-xs bg-green-50 rounded-lg p-3 mb-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
@@ -228,13 +251,18 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
               <div className="text-xs font-medium text-green-800">ETA: 8 min</div>
             </div>
             <div className="h-1 w-full bg-green-200 rounded-full">
-              <div className="h-1 bg-green-600 rounded-full animate-pulse" style={{ width: '80%' }}></div>
+              <div
+                className="h-1 bg-green-600 rounded-full animate-pulse"
+                style={{ width: '80%' }}
+              ></div>
             </div>
           </div>
-
           <p className="text-sm text-gray-600">Waiting for driver to accept...</p>
           <div className="flex space-x-1 mt-2">
-            <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <div
+              className="w-2 h-2 bg-green-600 rounded-full animate-bounce"
+              style={{ animationDelay: '0ms' }}
+            />
             <div
               className="w-2 h-2 bg-green-600 rounded-full animate-bounce"
               style={{ animationDelay: '300ms' }}
@@ -247,7 +275,7 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
         </div>
       </div>
 
-      {/* Step 3: Ambulance confirmed */}
+      {/* Step 3: Confirmed */}
       <div
         className={`transition-all duration-300 ${
           currentStep === 3 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'
@@ -258,8 +286,9 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
             <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Ambulance Confirmed!</h2>
-          <p className="text-gray-600 mb-4">Your ambulance has been booked and is on the way</p>
-
+          <p className="text-gray-600 mb-4">
+            Your ambulance has been booked and is on the way
+          </p>
           <div className="w-full max-w-xs bg-green-50 rounded-lg p-4 mb-2 border border-green-200">
             <div className="flex items-center">
               <div className="mr-3 relative">
@@ -276,8 +305,9 @@ function BookingContent({ router, toast, token }: { router: any; toast: any; tok
               </div>
             </div>
           </div>
-
-          <div className="text-sm text-gray-600 animate-pulse">Redirecting to booking details...</div>
+          <div className="text-sm text-gray-600 animate-pulse">
+            Redirecting to booking details...
+          </div>
         </div>
       </div>
 

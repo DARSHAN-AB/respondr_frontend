@@ -12,19 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { MapPin, Send, X, ArrowLeft, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedSection } from '@/components/animated-section';
-import { createReport } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
 
 export default function ReportIncidentPage() {
@@ -34,7 +25,6 @@ export default function ReportIncidentPage() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  const [showNoAmbulanceModal, setShowNoAmbulanceModal] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const { token } = useAuth();
@@ -74,11 +64,11 @@ export default function ReportIncidentPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.type !== 'image/png') {
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
       toast({
         variant: 'destructive',
         title: 'Invalid File Type',
-        description: 'Only PNG files are allowed.',
+        description: 'Only JPEG and PNG files are allowed.',
       });
       return;
     }
@@ -97,7 +87,7 @@ export default function ReportIncidentPage() {
       toast({
         variant: 'destructive',
         title: 'Photo Required',
-        description: 'Please upload a PNG photo of the incident.',
+        description: 'Please upload a JPEG/PNG photo of the incident.',
       });
       return;
     }
@@ -115,29 +105,35 @@ export default function ReportIncidentPage() {
     setError('');
 
     try {
-      const response = await createReport({
-        type: 'SOS',
-        latitude: location.lat,
-        longitude: location.lng,
-        description,
-        photo: photoFile,
+      const formData = new FormData();
+      formData.append('type', 'SOS');
+      formData.append('latitude', location.lat.toString());
+      formData.append('longitude', location.lng.toString());
+      formData.append('description', description);
+      formData.append('photo', photoFile);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reports/create`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to send report');
+      }
+
+      const data = await response.json();
 
       toast({
         title: 'Report Sent',
-        description: `Report ID: ${response.reportId}. Processing your request.`,
+        description: `Report ID: ${data.reportId}. Processing your request.`,
       });
-      router.push(`/report-processing?reportId=${response.reportId}`);
+
+      router.push(`/report-processing?reportId=${data.reportId}`);
     } catch (err: any) {
-      let errorMessage = 'Failed to send report.';
-
-      // if (err.status === 409 && err.reportId) {
-      //   router.push(`/report-processing?reportId=${err.reportId}&noAmbulance=true`);
-      //   return;
-      // } else if (err.message) {
-      //   errorMessage = err.message;
-      // }
-
+      const errorMessage = err.message || 'Failed to send report.';
       setError(errorMessage);
       toast({
         variant: 'destructive',
@@ -165,7 +161,7 @@ export default function ReportIncidentPage() {
             <CardHeader className="bg-red-600 text-white p-6">
               <CardTitle className="text-xl font-bold">Report Emergency</CardTitle>
               <CardDescription className="text-red-100">
-                Upload a PNG photo and report an incident instantly
+                Upload a photo and report an incident instantly
               </CardDescription>
             </CardHeader>
 
@@ -180,11 +176,13 @@ export default function ReportIncidentPage() {
                   className="flex flex-col items-center justify-center space-y-4 p-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 cursor-pointer hover:border-red-600 transition"
                 >
                   <Upload className="h-12 w-12 text-red-600" />
-                  <p className="text-center text-gray-600">Upload a PNG photo to help emergency services</p>
+                  <p className="text-center text-gray-600">
+                    Upload a JPEG/PNG photo to help emergency services
+                  </p>
                   <input
                     id="file-upload"
                     type="file"
-                    accept=".png"
+                    accept="image/png,image/jpeg"
                     className="hidden"
                     onChange={handleFileChange}
                   />
@@ -258,24 +256,6 @@ export default function ReportIncidentPage() {
           </Card>
         </AnimatedSection>
       </div>
-
-      <Dialog open={showNoAmbulanceModal} onOpenChange={setShowNoAmbulanceModal}>
-        <DialogContent className="max-w-sm rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-red-600">No Ambulance Found</DialogTitle>
-            <DialogDescription>
-              Sorry, no ambulances are available in your area right now.
-              <br />
-              <strong>Please call 108 directly</strong> for immediate assistance.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => setShowNoAmbulanceModal(false)} className="bg-red-600 hover:bg-red-700 text-white">
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

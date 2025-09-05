@@ -32,7 +32,7 @@ export default function ContactPage() {
               <div className="lg:w-1/2">
                 <h2 className="text-3xl font-bold mb-6">Get In Touch</h2>
                 <p className="text-gray-600 mb-8">
-                  Fill out the form and our team will get back to you within 24 hours.
+                  Fill out the form and our team will get back to you within 24 Business hours.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -54,7 +54,7 @@ export default function ContactPage() {
 
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address
+                      Your Email
                     </label>
                     <input
                       type="email"
@@ -176,8 +176,8 @@ export default function ContactPage() {
                       </div>
                       <div className="ml-4">
                         <h4 className="text-lg font-semibold">Email</h4>
+                        <p className="text-gray-600">respondr6@gmail.com</p>
                         <p className="text-gray-600">darshangowda.en@gmail.com</p>
-                        <p className="text-gray-600">harshapatilhp1@gmail.com</p>
                       </div>
                     </div>
 

@@ -14,6 +14,12 @@ import { AnimatedSection } from '@/components/animated-section';
 import { useAuth } from '@/lib/auth-context';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
+const API_BASE = 'https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net';
+
+const AZURE_API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  API_BASE;
+
 export default function BookAmbulancePage() {
   const [patientName, setPatientName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -86,7 +92,7 @@ export default function BookAmbulancePage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:3001/api/booking/create', {
+      const response = await fetch(`${AZURE_API_BASE}/api/booking/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +148,9 @@ export default function BookAmbulancePage() {
           <Card className="shadow-2xl rounded-2xl border-0 overflow-hidden">
             <CardHeader className="bg-red-600 text-white p-6">
               <CardTitle className="text-xl font-bold">Book an Ambulance</CardTitle>
-              <CardDescription className="text-red-100">Request emergency medical transportation</CardDescription>
+              <CardDescription className="text-red-100">
+                Request emergency medical transportation
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               {error && (
@@ -153,7 +161,9 @@ export default function BookAmbulancePage() {
               )}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="patientName" className="text-sm font-medium">Patient Name</Label>
+                  <Label htmlFor="patientName" className="text-sm font-medium">
+                    Patient Name
+                  </Label>
                   <Input
                     id="patientName"
                     value={patientName}
@@ -163,7 +173,9 @@ export default function BookAmbulancePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contactNumber" className="text-sm font-medium">Contact Number</Label>
+                  <Label htmlFor="contactNumber" className="text-sm font-medium">
+                    Contact Number
+                  </Label>
                   <Input
                     id="contactNumber"
                     type="tel"
@@ -174,7 +186,9 @@ export default function BookAmbulancePage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="destination" className="text-sm font-medium">Destination (e.g., Hospital)</Label>
+                  <Label htmlFor="destination" className="text-sm font-medium">
+                    Destination (e.g., Hospital)
+                  </Label>
                   <Input
                     id="destination"
                     value={destination}
@@ -193,15 +207,21 @@ export default function BookAmbulancePage() {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="accident" id="accident" className="text-red-600" />
-                      <Label htmlFor="accident" className="cursor-pointer text-sm">Road Accident</Label>
+                      <Label htmlFor="accident" className="cursor-pointer text-sm">
+                        Road Accident
+                      </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="medical" id="medical" className="text-red-600" />
-                      <Label htmlFor="medical" className="cursor-pointer text-sm">Medical Emergency</Label>
+                      <Label htmlFor="medical" className="cursor-pointer text-sm">
+                        Medical Emergency
+                      </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="other" id="other" className="text-red-600" />
-                      <Label htmlFor="other" className="cursor-pointer text-sm">Other Emergency</Label>
+                      <Label htmlFor="other" className="cursor-pointer text-sm">
+                        Other Emergency
+                      </Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -217,7 +237,9 @@ export default function BookAmbulancePage() {
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Label htmlFor="additionalInfo" className="text-sm font-medium">Additional Information</Label>
+                  <Label htmlFor="additionalInfo" className="text-sm font-medium">
+                    Additional Information
+                  </Label>
                   <Textarea
                     id="additionalInfo"
                     placeholder="Describe the emergency situation..."

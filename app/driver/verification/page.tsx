@@ -14,6 +14,9 @@ import { useAuth } from "@/lib/auth-context";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 
+// Centralized API Base URL (Azure)
+const API_BASE_URL = "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api"
+
 export default function DriverVerificationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -60,7 +63,7 @@ export default function DriverVerificationPage() {
       // Fetch driverId
       try {
         console.log(`Fetching driverId for userId: ${user.userId}`);
-        const driverResponse = await fetch(`http://localhost:3001/api/driver-id/${user.userId}`);
+        const driverResponse = await fetch(`${API_BASE_URL}/driver-id/${user.userId}`);
         const driverData = await driverResponse.json();
         console.log('Driver ID response:', driverData);
 
@@ -88,7 +91,7 @@ export default function DriverVerificationPage() {
       // Fetch verification status
       try {
         console.log(`Fetching verification status for userId: ${user.userId}`);
-        const statusResponse = await fetch(`http://localhost:3001/api/verification-status/${user.userId}`);
+        const statusResponse = await fetch(`${API_BASE_URL}/verification-status/${user.userId}`);
         const statusData = await statusResponse.json();
         console.log('Verification status response:', statusData);
 
@@ -277,12 +280,10 @@ export default function DriverVerificationPage() {
         timestamp: new Date().toISOString(),
       });
 
-      const response = await fetch("http://localhost:3001/api/driver-verification/submit", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-        body: formDataToSend,
+      const response = await fetch(`${API_BASE_URL}/driver-verification/submit`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+      body: formDataToSend,
       });
 
       console.log('Response status:', response.status, 'OK:', response.ok, 'Headers:', Object.fromEntries(response.headers));

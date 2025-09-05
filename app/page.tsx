@@ -101,7 +101,7 @@ export default function Home() {
                       <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 text-xl font-bold">
                         1
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-900">Tap SOS & Capture</h3>
+                      <h3 className="text-2xl font-bold text-gray-900">Capture & Report</h3>
                       <p className="text-gray-700">
                         Press the SOS button to immediately begin the emergency reporting process. Take a photo of the
                         incident to help emergency services assess the situation.

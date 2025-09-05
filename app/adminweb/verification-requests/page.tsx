@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/dialog";
 import { getAdminVerificationRequests, approveVerification, rejectVerification } from "@/lib/api";
 
+ // Replace localhost with your Azure API base URL
+  const AZURE_BASE_URL = 'https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net';
+
 export default function AdminVerificationRequestsPage() {
   const [verificationRequests, setVerificationRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
@@ -111,19 +114,18 @@ export default function AdminVerificationRequestsPage() {
   };
 
   const handleViewImage = (url: string, title: string) => {
-    // Remove 'Uploads/' prefix and normalize path
-    const cleanUrl = url.replace(/^Uploads\//, '');
-    const imageUrl = `http://localhost:3001/uploads/${cleanUrl}`;
-    setCurrentImage({ url: imageUrl, title });
-    setShowImageDialog(true);
-  };
+  if (!url) return;
+  const cleanUrl = url.replace(/^Uploads\//, "");
+  const imageUrl = `${AZURE_BASE_URL}/uploads/${cleanUrl}`;
+  setCurrentImage({ url: imageUrl, title });
+  setShowImageDialog(true);
+};
 
   const getImageUrl = (url: string) => {
-    // Remove 'Uploads/' prefix and normalize path
-    if (!url) return "/placeholder.svg";
-    const cleanUrl = url.replace(/^Uploads\//, '');
-    return `http://localhost:3001/uploads/${cleanUrl}`;
-  };
+  if (!url) return "/placeholder.svg";
+  const cleanUrl = url.replace(/^Uploads\//, "");
+  return `${AZURE_BASE_URL}/uploads/${cleanUrl}`;
+};
 
   const getTimeSince = (timestamp: string) => {
     const date = new Date(timestamp);

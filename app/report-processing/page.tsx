@@ -1,7 +1,7 @@
 'use client';
 
-import { Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, Search, X } from 'lucide-react';
@@ -10,11 +10,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/auth-context';
 
 export default function ReportProcessingPage() {
-  const router = useRouter(); // Safe outside Suspense as it's not client-side only
+  const router = useRouter();
   const { toast } = useToast();
   const { token } = useAuth();
 
-  // Initial check for token (server-safe)
   if (!token) {
     toast({
       variant: 'destructive',
@@ -49,6 +48,9 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
   const [isCancelled, setIsCancelled] = useState(false);
   const maxErrorRetries = 5;
 
+  // Replace localhost with your Azure API base URL
+  const API_BASE = 'https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api';
+
   useEffect(() => {
     if (!reportId) {
       toast({
@@ -60,22 +62,22 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
       return;
     }
 
-    // Animation loop: Cycle through steps 1–3 every 6 seconds (2 seconds per step)
+    // Animation loop
     const animationInterval = setInterval(() => {
       setCurrentStep((prev) => {
         if (prev === 3) {
-          setProgress(0); // Reset progress at the end of cycle
+          setProgress(0);
           return 1;
         }
-        setProgress((prev + 33.33).toFixed(2)); // Increment progress (33.33% per step)
+        setProgress((prev + 33.33).toFixed(2));
         return prev + 1;
       });
     }, 2000);
 
-    // Status check: Poll every 2 seconds
+    // Polling report status
     const statusInterval = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/booking/status/${reportId}`, {
+        const response = await fetch(`${API_BASE}/booking/status/${reportId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -132,7 +134,7 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
 
     setIsCancelled(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/booking/cancel/${reportId}`, {
+      const response = await fetch(`${API_BASE}/booking/cancel/${reportId}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -167,7 +169,7 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
         />
       </div>
 
-      {/* Step 1: Sending report */}
+      {/* Step 1 */}
       <div
         className={`transition-all duration-300 ${currentStep === 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}
       >
@@ -185,7 +187,7 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
         </div>
       </div>
 
-      {/* Step 2: Analyzing incident */}
+      {/* Step 2 */}
       <div
         className={`transition-all duration-300 ${currentStep === 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}
       >
@@ -208,7 +210,7 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
         </div>
       </div>
 
-      {/* Step 3: Searching for ambulance */}
+      {/* Step 3 */}
       <div
         className={`transition-all duration-300 ${currentStep === 3 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}
       >
