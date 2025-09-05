@@ -19,32 +19,43 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getAdminVerificationRequests, approveVerification, rejectVerification } from "@/lib/api";
+import {
+  getAdminVerificationRequests,
+  approveVerification,
+  rejectVerification,
+} from "@/lib/api";
 
- // Replace localhost with your Azure API base URL
-  const AZURE_BASE_URL = 'https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net';
+// Replace localhost with your Azure API base URL
+const AZURE_BASE_URL =
+  "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net";
 
 export default function AdminVerificationRequestsPage() {
-  const [verificationRequests, setVerificationRequests] = useState([]);
+  const [verificationRequests, setVerificationRequests] = useState<any[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showImageDialog, setShowImageDialog] = useState(false);
-  const [currentImage, setCurrentImage] = useState<{ url: string; title: string } | null>(null);
+  const [currentImage, setCurrentImage] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Fetch verification requests from backend
+  // Fetch verification requests
   useEffect(() => {
     const fetchRequests = async () => {
       try {
         setLoading(true);
         const data = await getAdminVerificationRequests();
-        console.log('Fetched verification requests:', data);
+        console.log("Fetched verification requests:", data);
         setVerificationRequests(data);
-      } catch (error) {
-        console.error('Error fetching verification requests:', error.response?.data || error.message);
+      } catch (error: any) {
+        console.error(
+          "Error fetching verification requests:",
+          error.response?.data || error.message
+        );
         toast({
           title: "Error",
           description: error.message || "Failed to fetch verification requests.",
@@ -62,19 +73,22 @@ export default function AdminVerificationRequestsPage() {
     try {
       await approveVerification(id, user?.user_id);
       setVerificationRequests((prev) =>
-        prev.map((req) => (req.id === id ? { ...req, status: "Approved" } : req))
+        prev.map((req) =>
+          req.id === id ? { ...req, status: "Approved" } : req
+        )
       );
-
       if (selectedRequest?.id === id) {
         setSelectedRequest({ ...selectedRequest, status: "Approved" });
       }
-
       toast({
         title: "Verification Approved",
         description: "The driver verification has been approved.",
       });
-    } catch (error) {
-      console.error('Error approving verification:', error.response?.data || error.message);
+    } catch (error: any) {
+      console.error(
+        "Error approving verification:",
+        error.response?.data || error.message
+      );
       toast({
         title: "Error",
         description: error.message || "Failed to approve verification.",
@@ -85,21 +99,24 @@ export default function AdminVerificationRequestsPage() {
 
   const handleReject = async (id: string) => {
     try {
-      await rejectVerification(id, user?.user_id, '');
+      await rejectVerification(id, user?.user_id, "");
       setVerificationRequests((prev) =>
-        prev.map((req) => (req.id === id ? { ...req, status: "Rejected" } : req))
+        prev.map((req) =>
+          req.id === id ? { ...req, status: "Rejected" } : req
+        )
       );
-
       if (selectedRequest?.id === id) {
         setSelectedRequest({ ...selectedRequest, status: "Rejected" });
       }
-
       toast({
         title: "Verification Rejected",
         description: "The driver verification has been rejected.",
       });
-    } catch (error) {
-      console.error('Error rejecting verification:', error.response?.data || error.message);
+    } catch (error: any) {
+      console.error(
+        "Error rejecting verification:",
+        error.response?.data || error.message
+      );
       toast({
         title: "Error",
         description: error.message || "Failed to reject verification.",
@@ -113,34 +130,33 @@ export default function AdminVerificationRequestsPage() {
     setShowDetailsDialog(true);
   };
 
-  const handleViewImage = (url: string, title: string) => {
-  if (!url) return;
-  const cleanUrl = url.replace(/^Uploads\//, "");
-  const imageUrl = `${AZURE_BASE_URL}/uploads/${cleanUrl}`;
-  setCurrentImage({ url: imageUrl, title });
-  setShowImageDialog(true);
-};
-
+  // ✅ Fixed: no forced "uploads/" prepend
   const getImageUrl = (url: string) => {
-  if (!url) return "/placeholder.svg";
-  const cleanUrl = url.replace(/^Uploads\//, "");
-  return `${AZURE_BASE_URL}/uploads/${cleanUrl}`;
-};
+    if (!url) return "/placeholder.svg";
+    if (url.startsWith("http")) return url; // already absolute
+    if (url.startsWith("uploads/") || url.startsWith("Uploads/")) {
+      return `${AZURE_BASE_URL}/${url}`;
+    }
+    return `${AZURE_BASE_URL}/uploads/${url}`;
+  };
+
+  const handleViewImage = (url: string, title: string) => {
+    if (!url) return;
+    setCurrentImage({ url: getImageUrl(url), title });
+    setShowImageDialog(true);
+  };
 
   const getTimeSince = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-
     if (diffMins < 1) return "Just now";
     if (diffMins === 1) return "1 minute ago";
     if (diffMins < 60) return `${diffMins} minutes ago`;
-
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours === 1) return "1 hour ago";
     if (diffHours < 24) return `${diffHours} hours ago`;
-
     const diffDays = Math.floor(diffHours / 24);
     if (diffDays === 1) return "1 day ago";
     return `${diffDays} days ago`;
@@ -155,7 +171,9 @@ export default function AdminVerificationRequestsPage() {
             <SidebarTrigger />
             <div className="flex items-center gap-2">
               <div className="relative h-8 w-8 overflow-hidden rounded-full bg-red-600">
-                <div className="absolute inset-0 flex items-center justify-center text-white font-bold">R</div>
+                <div className="absolute inset-0 flex items-center justify-center text-white font-bold">
+                  R
+                </div>
               </div>
               <h1 className="text-xl font-bold text-red-600">Respondr</h1>
               <Badge className="ml-2 bg-red-600">Verification Requests</Badge>
@@ -173,14 +191,20 @@ export default function AdminVerificationRequestsPage() {
                 </CardHeader>
                 <CardContent>
                   {loading ? (
-                    <div className="text-center py-8 text-gray-500">Loading...</div>
+                    <div className="text-center py-8 text-gray-500">
+                      Loading...
+                    </div>
                   ) : (
                     <Tabs defaultValue="pending">
                       <TabsList className="w-full mb-6">
                         <TabsTrigger value="pending" className="flex-1">
                           Pending
                           <Badge className="ml-2 bg-yellow-500">
-                            {verificationRequests.filter((r) => r.status === "Pending").length}
+                            {
+                              verificationRequests.filter(
+                                (r) => r.status === "Pending"
+                              ).length
+                            }
                           </Badge>
                         </TabsTrigger>
                         <TabsTrigger value="approved" className="flex-1">
@@ -191,35 +215,58 @@ export default function AdminVerificationRequestsPage() {
                         </TabsTrigger>
                       </TabsList>
 
+                      {/* Pending Requests */}
                       <TabsContent value="pending" className="space-y-4">
-                        {verificationRequests.filter((r) => r.status === "Pending").length === 0 ? (
-                          <div className="text-center py-8 text-gray-500">No pending verification requests</div>
+                        {verificationRequests.filter(
+                          (r) => r.status === "Pending"
+                        ).length === 0 ? (
+                          <div className="text-center py-8 text-gray-500">
+                            No pending verification requests
+                          </div>
                         ) : (
                           <div className="space-y-4">
                             {verificationRequests
                               .filter((r) => r.status === "Pending")
                               .map((request) => (
-                                <div key={request.id} className="p-4 rounded-lg border border-yellow-200 bg-yellow-50">
+                                <div
+                                  key={request.id}
+                                  className="p-4 rounded-lg border border-yellow-200 bg-yellow-50"
+                                >
                                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                     <div>
-                                      <h3 className="font-medium">{request.driverName}</h3>
+                                      <h3 className="font-medium">
+                                        {request.driverName}
+                                      </h3>
                                       <p className="text-sm text-gray-600">
                                         {request.email} • {request.phone}
                                       </p>
                                       <div className="flex items-center gap-2 mt-1">
-                                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-blue-100 text-blue-800 border-blue-200"
+                                        >
                                           License: {request.licenseNumber}
                                         </Badge>
-                                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-blue-100 text-blue-800 border-blue-200"
+                                        >
                                           Vehicle: {request.vehicleRegistration}
                                         </Badge>
                                       </div>
                                       <p className="text-xs text-gray-500 mt-2">
-                                        Submitted {getTimeSince(request.submittedAt)}
+                                        Submitted{" "}
+                                        {getTimeSince(request.submittedAt)}
                                       </p>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
-                                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(request)}>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          handleViewDetails(request)
+                                        }
+                                      >
                                         <Eye className="mr-1 h-4 w-4" />
                                         View Details
                                       </Button>
@@ -234,7 +281,9 @@ export default function AdminVerificationRequestsPage() {
                                       </Button>
                                       <Button
                                         size="sm"
-                                        onClick={() => handleApprove(request.id)}
+                                        onClick={() =>
+                                          handleApprove(request.id)
+                                        }
                                         className="bg-green-600 hover:bg-green-700"
                                       >
                                         <CheckCircle className="mr-1 h-4 w-4" />
@@ -248,39 +297,64 @@ export default function AdminVerificationRequestsPage() {
                         )}
                       </TabsContent>
 
+                      {/* Approved Requests */}
                       <TabsContent value="approved" className="space-y-4">
-                        {verificationRequests.filter((r) => r.status === "Approved").length === 0 ? (
-                          <div className="text-center py-8 text-gray-500">No approved verification requests</div>
+                        {verificationRequests.filter(
+                          (r) => r.status === "Approved"
+                        ).length === 0 ? (
+                          <div className="text-center py-8 text-gray-500">
+                            No approved verification requests
+                          </div>
                         ) : (
                           <div className="space-y-4">
                             {verificationRequests
                               .filter((r) => r.status === "Approved")
                               .map((request) => (
-                                <div key={request.id} className="p-4 rounded-lg border border-green-200 bg-green-50">
+                                <div
+                                  key={request.id}
+                                  className="p-4 rounded-lg border border-green-200 bg-green-50"
+                                >
                                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                     <div>
-                                      <h3 className="font-medium">{request.driverName}</h3>
+                                      <h3 className="font-medium">
+                                        {request.driverName}
+                                      </h3>
                                       <p className="text-sm text-gray-600">
                                         {request.email} • {request.phone}
                                       </p>
                                       <div className="flex items-center gap-2 mt-1">
-                                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-blue-100 text-blue-800 border-blue-200"
+                                        >
                                           License: {request.licenseNumber}
                                         </Badge>
-                                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-blue-100 text-blue-800 border-blue-200"
+                                        >
                                           Vehicle: {request.vehicleRegistration}
                                         </Badge>
                                       </div>
                                       <p className="text-xs text-gray-500 mt-2">
-                                        Submitted {getTimeSince(request.submittedAt)}
+                                        Submitted{" "}
+                                        {getTimeSince(request.submittedAt)}
                                       </p>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(request)}>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          handleViewDetails(request)
+                                        }
+                                      >
                                         <Eye className="mr-1 h-4 w-4" />
                                         View Details
                                       </Button>
-                                      <Badge className="bg-green-600">Approved</Badge>
+                                      <Badge className="bg-green-600">
+                                        Approved
+                                      </Badge>
                                     </div>
                                   </div>
                                 </div>
@@ -289,39 +363,64 @@ export default function AdminVerificationRequestsPage() {
                         )}
                       </TabsContent>
 
+                      {/* Rejected Requests */}
                       <TabsContent value="rejected" className="space-y-4">
-                        {verificationRequests.filter((r) => r.status === "Rejected").length === 0 ? (
-                          <div className="text-center py-8 text-gray-500">No rejected verification requests</div>
+                        {verificationRequests.filter(
+                          (r) => r.status === "Rejected"
+                        ).length === 0 ? (
+                          <div className="text-center py-8 text-gray-500">
+                            No rejected verification requests
+                          </div>
                         ) : (
                           <div className="space-y-4">
                             {verificationRequests
                               .filter((r) => r.status === "Rejected")
                               .map((request) => (
-                                <div key={request.id} className="p-4 rounded-lg border border-gray-200 bg-gray-50">
+                                <div
+                                  key={request.id}
+                                  className="p-4 rounded-lg border border-gray-200 bg-gray-50"
+                                >
                                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                                     <div>
-                                      <h3 className="font-medium">{request.driverName}</h3>
+                                      <h3 className="font-medium">
+                                        {request.driverName}
+                                      </h3>
                                       <p className="text-sm text-gray-600">
                                         {request.email} • {request.phone}
                                       </p>
                                       <div className="flex items-center gap-2 mt-1">
-                                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-blue-100 text-blue-800 border-blue-200"
+                                        >
                                           License: {request.licenseNumber}
                                         </Badge>
-                                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+                                        <Badge
+                                          variant="outline"
+                                          className="bg-blue-100 text-blue-800 border-blue-200"
+                                        >
                                           Vehicle: {request.vehicleRegistration}
                                         </Badge>
                                       </div>
                                       <p className="text-xs text-gray-500 mt-2">
-                                        Submitted {getTimeSince(request.submittedAt)}
+                                        Submitted{" "}
+                                        {getTimeSince(request.submittedAt)}
                                       </p>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(request)}>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                          handleViewDetails(request)
+                                        }
+                                      >
                                         <Eye className="mr-1 h-4 w-4" />
                                         View Details
                                       </Button>
-                                      <Badge className="bg-gray-600">Rejected</Badge>
+                                      <Badge className="bg-gray-600">
+                                        Rejected
+                                      </Badge>
                                     </div>
                                   </div>
                                 </div>
@@ -338,11 +437,14 @@ export default function AdminVerificationRequestsPage() {
         </div>
       </div>
 
+      {/* Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Verification Details</DialogTitle>
-            <DialogDescription>Review driver verification documents and information</DialogDescription>
+            <DialogDescription>
+              Review driver verification documents and information
+            </DialogDescription>
           </DialogHeader>
 
           {selectedRequest && (
@@ -350,45 +452,62 @@ export default function AdminVerificationRequestsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div
                   className="border rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => handleViewImage(selectedRequest.idProofUrl, "ID Proof")}
+                  onClick={() =>
+                    handleViewImage(selectedRequest.idProofUrl, "ID Proof")
+                  }
                 >
                   <div className="aspect-video relative">
                     <img
                       src={getImageUrl(selectedRequest.idProofUrl)}
                       alt="ID Proof"
                       className="w-full h-full object-cover"
-                      onError={(e) => (e.currentTarget.src = "/placeholder.svg")}
+                      onError={(e) =>
+                        (e.currentTarget.src = "/placeholder.svg")
+                      }
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity">
                       <Eye className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <div className="p-2 text-center text-sm font-medium">ID Proof</div>
+                  <div className="p-2 text-center text-sm font-medium">
+                    ID Proof
+                  </div>
                 </div>
 
                 <div
                   className="border rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => handleViewImage(selectedRequest.licenseUrl, "Driver's License")}
+                  onClick={() =>
+                    handleViewImage(
+                      selectedRequest.licenseUrl,
+                      "Driver's License"
+                    )
+                  }
                 >
                   <div className="aspect-video relative">
                     <img
                       src={getImageUrl(selectedRequest.licenseUrl)}
                       alt="Driver's License"
                       className="w-full h-full object-cover"
-                      onError={(e) => (e.currentTarget.src = "/placeholder.svg")}
+                      onError={(e) =>
+                        (e.currentTarget.src = "/placeholder.svg")
+                      }
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity">
                       <Eye className="h-8 w-8 text-white" />
                     </div>
                   </div>
-                  <div className="p-2 text-center text-sm font-medium">Driver's License</div>
+                  <div className="p-2 text-center text-sm font-medium">
+                    Driver's License
+                  </div>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Driver Name</p>
+                    <p className="text-sm font-medium text-gray-500">
+                      Driver Name
+                    </p>
                     <p>{selectedRequest.driverName}</p>
                   </div>
                   <div>
@@ -403,18 +522,24 @@ export default function AdminVerificationRequestsPage() {
                     <p>{selectedRequest.phone}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Submitted</p>
+                    <p className="text-sm font-medium text-gray-500">
+                      Submitted
+                    </p>
                     <p>{getTimeSince(selectedRequest.submittedAt)}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">License Number</p>
+                    <p className="text-sm font-medium text-gray-500">
+                      License Number
+                    </p>
                     <p>{selectedRequest.licenseNumber}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Vehicle Registration</p>
+                    <p className="text-sm font-medium text-gray-500">
+                      Vehicle Registration
+                    </p>
                     <p>{selectedRequest.vehicleRegistration}</p>
                   </div>
                 </div>
@@ -466,12 +591,12 @@ export default function AdminVerificationRequestsPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Image Preview Dialog */}
       <Dialog open={showImageDialog} onOpenChange={setShowImageDialog}>
         <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>{currentImage?.title}</DialogTitle>
           </DialogHeader>
-
           {currentImage && (
             <div className="flex justify-center">
               <img
