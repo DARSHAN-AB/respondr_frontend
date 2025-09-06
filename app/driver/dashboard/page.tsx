@@ -488,11 +488,13 @@ export default function DriverDashboardPage() {
           {currentNotification && (
             <div className="space-y-4">
               <div className="rounded-lg overflow-hidden border">
-                <img
-                  src={currentNotification.photoUrl || "/placeholder.svg"}
-                  alt="Emergency"
-                  className="w-full h-auto"
-                />
+                {currentNotification.photoUrl && (
+                  <img
+                    src={currentNotification.photoUrl}
+                    alt="Emergency"
+                    className="w-full h-auto"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
