@@ -179,72 +179,73 @@ export default function DriverNotificationsPage() {
 };
 
 
-  const handleCompleteJob = async (id: string) => {
-    if (!user?.userId) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "User not authenticated.",
-      })
-      return
-    }
-
-    try {
-      // Step 1: Mark job as completed
-      const completeResponse = await fetch(`${API_BASE_URL}/driver/mark-completed`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.userId,
-          emergencyId: id,
-        }),
-      })
-
-      if (!completeResponse.ok) {
-        const errorData = await completeResponse.json()
-        throw new Error(errorData.error || "Failed to mark job as completed")
-      }
-
-      // Step 2: Update dispatch record
-      const currentTime = new Date().toISOString()
-      const dispatchResponse = await fetch(`${API_BASE_URL}/driver/dispatch`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          reportId: id,
-          action: "complete",
-          arrivalTime: currentTime,
-          completionTime: currentTime,
-        }),
-      })
-
-      if (!dispatchResponse.ok) {
-        const errorData = await dispatchResponse.json()
-        throw new Error(errorData.error || "Failed to update dispatch record")
-      }
-
-      // Update UI
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, status: "Completed" } : n))
-      )
-
-      toast({
-        title: "Job Completed",
-        description: "The job has been marked as completed. You are now available.",
-      })
-    } catch (error: any) {
-      console.error("Error completing job:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while completing the job.",
-      })
-    }
+  const handleCompleteJob = async (notificationId: string) => {
+  if (!user?.userId) {
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: "User not authenticated.",
+    });
+    return;
   }
+
+  try {
+    // 🔑 Extract integer reportId
+    const reportId = parseInt(notificationId.replace(/^(sos-|booking-)/, ""));
+    if (isNaN(reportId)) throw new Error("Invalid report ID format");
+
+    // Step 1: Mark job as completed
+    const completeResponse = await fetch(`${API_BASE_URL}/driver/mark-completed`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.userId,
+        emergencyId: reportId,  // ✅ send as integer
+      }),
+    });
+
+    if (!completeResponse.ok) {
+      const errorData = await completeResponse.json();
+      throw new Error(errorData.error || "Failed to mark job as completed");
+    }
+
+    // Step 2: Update dispatch record
+    const currentTime = new Date().toISOString();
+    const dispatchResponse = await fetch(`${API_BASE_URL}/driver/dispatch`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reportId,   // ✅ integer
+        action: "complete",
+        arrivalTime: currentTime,
+        completionTime: currentTime,
+      }),
+    });
+
+    if (!dispatchResponse.ok) {
+      const errorData = await dispatchResponse.json();
+      throw new Error(errorData.error || "Failed to update dispatch record");
+    }
+
+    // ✅ Update UI
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, status: "Completed" } : n))
+    );
+
+    toast({
+      title: "Job Completed",
+      description: "The job has been marked as completed. You are now available.",
+    });
+  } catch (error: any) {
+    console.error("Error completing job:", error);
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: error.message || "An error occurred while completing the job.",
+    });
+  }
+};
+
 
   const handleRejectJob = async (notificationId: string) => {
   try {
