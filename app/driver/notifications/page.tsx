@@ -94,7 +94,7 @@ export default function DriverNotificationsPage() {
     fetchNotifications()
   }, [toast])
 
-  const handleAcceptJob = async (reportIdRaw: string) => {
+  const handleAcceptJob = async (notificationId: string) => {
   if (!user?.userId) {
     toast({
       variant: "destructive",
@@ -105,59 +105,35 @@ export default function DriverNotificationsPage() {
   }
 
   try {
-    const reportId = parseInt(reportIdRaw);
+    // 🔑 Extract reportId (remove prefix like "sos-" or "booking-")
+    const reportId = parseInt(notificationId.replace(/^(sos-|booking-)/, ""));
     if (isNaN(reportId)) {
       throw new Error("Invalid report ID format");
     }
 
-    let latitude: number, longitude: number;
-    if (navigator.geolocation) {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
-      latitude = position.coords.latitude;
-      longitude = position.coords.longitude;
-    } else {
-      throw new Error("Geolocation not supported");
-    }
+    // get current location
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
 
     // Step 1: Mark driver as busy
     const markBusyResponse = await fetch(`${API_BASE_URL}/driver/mark-busy`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user.userId,
-        reportId, // send number
-        latitude,
-        longitude,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.userId, reportId, latitude, longitude }),
     });
-
-    if (!markBusyResponse.ok) {
-      const errorData = await markBusyResponse.json();
-      throw new Error(errorData.error || "Failed to mark driver as busy or assign report");
-    }
+    if (!markBusyResponse.ok) throw new Error("Failed to mark driver busy");
 
     // Step 2: Assign report
     const currentTime = new Date().toISOString();
     const assignReportResponse = await fetch(`${API_BASE_URL}/driver/assign-report`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        reportId,
-        userId: user.userId,
-        responseTime: currentTime,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reportId, userId: user.userId, responseTime: currentTime }),
     });
-
-    if (!assignReportResponse.ok) {
-      const errorData = await assignReportResponse.json();
-      throw new Error(errorData.error || "Failed to assign report");
-    }
+    if (!assignReportResponse.ok) throw new Error("Failed to assign report");
 
     const assignReportData = await assignReportResponse.json();
     const assignmentId = assignReportData.assignmentId;
@@ -165,9 +141,7 @@ export default function DriverNotificationsPage() {
     // Step 3: Dispatch
     const dispatchResponse = await fetch(`${API_BASE_URL}/driver/dispatch`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: user.userId,
         reportId,
@@ -176,28 +150,23 @@ export default function DriverNotificationsPage() {
         action: "dispatch",
       }),
     });
+    if (!dispatchResponse.ok) throw new Error("Failed to dispatch");
 
-    if (!dispatchResponse.ok) {
-      const errorData = await dispatchResponse.json();
-      throw new Error(errorData.error || "Failed to dispatch");
-    }
-
-    // Update UI
+    // ✅ Update UI to accepted
     setNotifications((prev) =>
-      prev.map((n) => (n.id === reportIdRaw ? { ...n, status: "accepted" } : n))
+      prev.map((n) => (n.id === notificationId ? { ...n, status: "accepted" } : n))
     );
 
-    // Open Google Maps
-    const notification = notifications.find((n) => n.id === reportIdRaw);
+    // Open Google Maps if location available
+    const notification = notifications.find((n) => n.id === notificationId);
     if (notification?.sender?.location) {
       const { lat, lng } = notification.sender.location;
-      const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-      window.open(googleMapsUrl, "_blank");
+      window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
     }
 
     toast({
       title: "Job Accepted",
-      description: "You have accepted the request. Google Maps has been opened with the location.",
+      description: "You have accepted the request. Google Maps opened with location.",
     });
   } catch (error: any) {
     console.error("Error accepting job:", error);
@@ -277,42 +246,36 @@ export default function DriverNotificationsPage() {
     }
   }
 
-  const handleRejectJob = async (id: string) => {
-    try {
-      // Step 1: Reject job
-      const rejectResponse = await fetch(`${API_BASE_URL}/driver/reject-job`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emergencyId: id,
-        }),
-      })
+  const handleRejectJob = async (notificationId: string) => {
+  try {
+    // 🔑 Extract integer reportId
+    const reportId = parseInt(notificationId.replace(/^(sos-|booking-)/, ""));
+    if (isNaN(reportId)) throw new Error("Invalid report ID format");
 
-      if (!rejectResponse.ok) {
-        const errorData = await rejectResponse.json()
-        throw new Error(errorData.error || "Failed to reject job")
-      }
+    const rejectResponse = await fetch(`${API_BASE_URL}/driver/reject-job`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reportId }), // backend expects reportId
+    });
 
-      // Update UI
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, status: "rejected" } : n))
-      )
+    if (!rejectResponse.ok) throw new Error("Failed to reject job");
 
-      toast({
-        title: "Job Rejected",
-        description: "You have rejected the request.",
-      })
-    } catch (error: any) {
-      console.error("Error rejecting job:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message || "An error occurred while rejecting the job.",
-      })
-    }
+    // ✅ Update UI
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, status: "rejected" } : n))
+    );
+
+    toast({ title: "Job Rejected", description: "You have rejected the request." });
+  } catch (error: any) {
+    console.error("Error rejecting job:", error);
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: error.message || "An error occurred while rejecting the job.",
+    });
   }
+};
+
 
   const handleMarkAsRead = (id: string) => {
     setNotifications((prev) =>
