@@ -322,7 +322,7 @@ export default function Home() {
           <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center">
             <p className="text-center text-sm text-gray-600 md:text-left">© 2025 Respondr. All rights reserved.</p>
             <div className="flex gap-6 mt-4 md:mt-0">
-              <Link href="#" className="text-gray-600 hover:text-red-600 transition-colors">
+              <Link href="https://www.facebook.com/profile.php?id=61580669720527" className="text-gray-600 hover:text-red-600 transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -339,7 +339,7 @@ export default function Home() {
                 </svg>
                 <span className="sr-only">Facebook</span>
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-red-600 transition-colors">
+              <Link href="https://x.com/respondr6" className="text-gray-600 hover:text-red-600 transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -350,7 +350,7 @@ export default function Home() {
                 >
                   <path d="M18.596 2H21L14.504 9.336 22.2 22h-6.704l-4.888-7.68L5.9 22H3l7.008-7.88L2 2h6.84l4.432 6.96L18.596 2zm-1.2 18h1.528L7.92 4H6.36l11.036 16z"/>
                 </svg>
-                <span className="sr-only">Twitter</span>
+                <span className="sr-only">X</span>
               </Link>
               <Link href="https://www.instagram.com/respondr._/" className="text-gray-600 hover:text-red-600 transition-colors">
                 <svg

@@ -212,7 +212,7 @@ export default function ContactPage() {
                     <div className="flex space-x-4">
                       {/* Facebook */}
                       <a
-                        href="#"
+                        href="https://www.facebook.com/profile.php?id=61580669720527"
                         className="bg-gray-200 hover:bg-red-100 p-3 rounded-full transition duration-300"
                       >
                         <svg className="h-5 w-5 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ export default function ContactPage() {
 
                       {/* Twitter (X) */}
                       <a
-                        href="#"
+                        href="https://x.com/respondr6"
                         className="bg-gray-200 hover:bg-red-100 p-3 rounded-full transition duration-300"
                       >
                         <svg className="h-5 w-5 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
