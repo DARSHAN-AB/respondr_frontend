@@ -15,7 +15,7 @@ export default function Home() {
         <div className="flex h-16 items-center justify-between px-3 md:px-6 container mx-auto">
           <div className="flex items-center gap-2">
             <div className="relative h-8 w-8 overflow-hidden rounded-full bg-red-600">
-                <img src="/secondry logo.png" alt="Logo" />
+                <img src="/typography.jpg" alt="Logo" />
             </div>
       <span className="text-xl font-bold text-red-600">Respondr</span>
     </div>

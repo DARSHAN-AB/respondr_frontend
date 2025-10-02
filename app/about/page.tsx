@@ -91,6 +91,9 @@ export default function AboutPage() {
                 A visionary leader with a deep passion for revolutionizing healthcare through machine learning.
               </p>
               <div className="flex justify-center space-x-3">
+                <a href="https://darshgowda.netlify.app/" target="_blank" rel="noopener noreferrer">
+                    <img src="/website.png" alt="Website" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
+                </a>
                 <a href="https://www.linkedin.com/in/darshan-ab-/" target="_blank" rel="noopener noreferrer">
                   <img src="/linkedin.png" alt="Linkedin" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
                 </a>
@@ -112,7 +115,7 @@ export default function AboutPage() {
                   onClick={() => handleImageClick("/patil.jpg?height=300&width=300")}
                 />
                 <h3 className="text-xl font-semibold mb-1">Harsha Patil</h3>
-                <p className="text-red-600 font-medium mb-2">Co-Founder & CFO</p>
+                <p className="text-red-600 font-medium mb-2">Co-Founder, COO & CFO</p>
                 <p className="text-gray-600 mb-4">
                   A strategic thinker with a strong focus on mobile application, driving innovative digital solutions with a keen business acumen.
                 </p>
@@ -153,6 +156,35 @@ export default function AboutPage() {
                     <img src="/linkedin.png" alt="Linkedin" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
                   </a>
                   <a href="https://github.com/Vedahalemane" target="_blank" rel="noopener noreferrer">
+                    <img src="/github_logo.png" alt="GitHub" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
+                  </a>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="bg-white p-6 rounded-lg shadow-md text-center"
+                whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} // Scale up effect on hover
+                whileTap={{ scale: 0.98 }} // Slight scale down on click
+              >
+                <img
+                  src="/patil.jpg?height=300&width=300"
+                  alt="Founder 2"
+                  className="w-32 h-32 rounded-full mx-auto mb-4 object-cover cursor-pointer"
+                  onClick={() => handleImageClick("/patil.jpg?height=300&width=300")}
+                />
+                <h3 className="text-xl font-semibold mb-1">Gaurav Nayak K</h3>
+                <p className="text-red-600 font-medium mb-2">CTO</p>
+                <p className="text-gray-600 mb-4">
+                  A technology leader with expertise in scalable architectures, delivering robust digital platforms while aligning technical strategies seamlessly with business objectives.
+                </p>
+                <div className="flex justify-center space-x-3">
+                  {/* <a href="https://empty.netlify.app/" target="_blank" rel="noopener noreferrer">
+                    <img src="/website.png" alt="Website" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
+                  </a> */}
+                  <a href="https://www.linkedin.com/in/gauravnayakk/" target="_blank" rel="noopener noreferrer">
+                    <img src="/linkedin.png" alt="Linkedin" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
+                  </a>
+                  <a href="https://github.com/selfmusing94/" target="_blank" rel="noopener noreferrer">
                     <img src="/github_logo.png" alt="GitHub" className="w-6 h-6 hover:opacity-80 transition-opacity"/>
                   </a>
                 </div>
