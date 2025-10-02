@@ -73,7 +73,7 @@ export default function AboutPage() {
         <AnimatedSection>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Meet the Founders</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
               <motion.div
                 className="bg-white p-6 rounded-lg shadow-md text-center"
                 whileHover={{ scale: 1.05, transition: { duration: 0.3 } }} // Scale up effect on hover
@@ -167,10 +167,10 @@ export default function AboutPage() {
                 whileTap={{ scale: 0.98 }} // Slight scale down on click
               >
                 <img
-                  src="/patil.jpg?height=300&width=300"
-                  alt="Founder 2"
+                  src="/gaurav.jpeg?height=300&width=300"
+                  alt="CTO"
                   className="w-32 h-32 rounded-full mx-auto mb-4 object-cover cursor-pointer"
-                  onClick={() => handleImageClick("/patil.jpg?height=300&width=300")}
+                  onClick={() => handleImageClick("/gaurav.jpeg?height=300&width=300")}
                 />
                 <h3 className="text-xl font-semibold mb-1">Gaurav Nayak K</h3>
                 <p className="text-red-600 font-medium mb-2">CTO</p>
