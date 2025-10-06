@@ -9,7 +9,7 @@ const testimonials = [
       "We believe emergency services should be just one tap away — no waiting, no confusion, no delay.",
     name: "Team Respondr",
     title: "Vision",
-    avatar: "/secondry logo.png",
+    avatar: "/main.png",
   },
   {
     quote:
@@ -23,7 +23,7 @@ const testimonials = [
       "This is just the beginning — we're working towards smarter systems, better coverage, and truly inclusive access.",
     name: "Road Ahead",
     title: "Future Goals",
-    avatar: "/secondry logo.png",
+    avatar: "/main.png",
   },
 ]
 
