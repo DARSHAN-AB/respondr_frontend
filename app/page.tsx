@@ -40,7 +40,7 @@ export default function Home() {
                 Login
               </Button>
             </Link>
-            <Link href="/onboarding">
+            <Link href="/signup">
               <Button className="bg-red-600 text-white hover:bg-red-700">Sign Up</Button>
             </Link>
           </div>
@@ -258,14 +258,14 @@ export default function Home() {
         </section>
       </main>
 
-      {/* ✅ FOOTER UPDATED */}
+      {/* FOOTER UPDATED */}
       <footer className="w-full border-t bg-white py-12">
         <div className="container px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="relative h-8 w-8 overflow-hidden rounded-full">
-                  {/* ✅ Replaced R with same typography image */}
+                  {/* Replaced R with the typography image */}
                   <img
                     src="/typography.jpg"
                     alt="Logo"
@@ -278,7 +278,6 @@ export default function Home() {
                 Revolutionizing emergency response with AI-powered technology and real-time tracking.
               </p>
             </div>
-            {/* Other Footer Sections remain same */}
             <div>
               <h3 className="font-medium text-gray-900 mb-3">Product</h3>
               <ul className="space-y-2">
@@ -393,6 +392,27 @@ export default function Home() {
                   <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
                 </svg>
                 <span className="sr-only">Instagram</span>
+              </Link>
+              <Link
+                href="https://www.youtube.com/@respondr-ambulance"
+                className="text-gray-600 hover:text-red-600 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5"
+                >
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2A29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z"></path>
+                  <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon>
+                </svg>
+                <span className="sr-only">YouTube</span>
               </Link>
             </div>
           </div>

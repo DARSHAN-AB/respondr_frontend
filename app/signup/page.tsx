@@ -128,7 +128,7 @@ export default function SignupPage() {
           <Link href="/" className="inline-flex items-center gap-2">
             <div className="relative h-12 w-12 overflow-hidden rounded-full bg-red-600 shadow-md">
               <Image
-                src="/secondry logo.png"
+                src="/main.png"
                 alt="Company Logo"
                 fill
                 className="object-cover"
