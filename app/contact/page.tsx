@@ -222,7 +222,7 @@ export default function ContactPage() {
 
                       {/* Instagram */}
                       <a
-                        href="https://www.instagram.com/respondr._/"
+                        href="https://www.instagram.com/respondr.in/"
                         className="bg-gray-200 hover:bg-red-100 p-3 rounded-full transition duration-300"
                       >
                         <svg className="h-5 w-5 text-gray-700" fill="currentColor" viewBox="0 0 24 24">

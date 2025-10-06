@@ -374,7 +374,7 @@ export default function Home() {
                 </svg>
                 <span className="sr-only">X</span>
               </Link>
-              <Link href="https://www.instagram.com/respondr._/" className="text-gray-600 hover:text-red-600 transition-colors">
+              <Link href="https://www.instagram.com/respondr.in/" className="text-gray-600 hover:text-red-600 transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
