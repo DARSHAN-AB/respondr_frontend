@@ -6,38 +6,48 @@ import { HeroSection } from "@/components/hero-section"
 import { FeatureCard } from "@/components/feature-card"
 import { StatsCounter } from "@/components/stats-counter"
 import { TestimonialSlider } from "@/components/testimonial-slider"
-import { Navigation } from "@/components/navigation";
+import { Navigation } from "@/components/navigation"
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
+      {/* HEADER */}
       <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
         <div className="flex h-16 items-center justify-between px-3 md:px-6 container mx-auto">
+          {/* LOGO + TITLE */}
           <div className="flex items-center gap-2">
-            <div className="relative h-8 w-8 overflow-hidden rounded-full bg-red-600">
-                <img src="/typography.jpg" alt="Logo" />
+            <div className="relative h-8 w-8 overflow-hidden rounded-full">
+              {/* Removed red background and zoomed image slightly */}
+              <img
+                src="/typography.jpg"
+                alt="Logo"
+                className="object-cover w-full h-full scale-110"
+              />
             </div>
-      <span className="text-xl font-bold text-red-600">Respondr</span>
-    </div>
+            <span className="text-xl font-bold text-red-600">Respondr</span>
+          </div>
 
-    {/* Navigation links */}
-    <Navigation />
+          {/* Navigation links */}
+          <Navigation />
 
-    {/* Auth Buttons */}
-    <div className="flex items-center gap-4">
-      <Link href="/login">
-        <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 hover:text-red-700">
-          Login
-        </Button>
-      </Link>
-      <Link href="/signup">
-        <Button className="bg-red-600 text-white hover:bg-red-700">Sign Up</Button>
-      </Link>
-    </div>
-  </div>
-</header>
+          {/* Auth Buttons */}
+          <div className="flex items-center gap-4">
+            <Link href="/login">
+              <Button
+                variant="outline"
+                className="border-red-600 text-red-600 hover:bg-red-50 hover:text-red-700"
+              >
+                Login
+              </Button>
+            </Link>
+            <Link href="/onboarding">
+              <Button className="bg-red-600 text-white hover:bg-red-700">Sign Up</Button>
+            </Link>
+          </div>
+        </div>
+      </header>
 
-
+      {/* MAIN CONTENT */}
       <main className="flex-1">
         <HeroSection />
 
@@ -95,6 +105,7 @@ export default function Home() {
               <div className="absolute top-24 left-1/2 h-[calc(100%-6rem)] w-1 -translate-x-1/2 bg-red-200 hidden md:block"></div>
 
               <div className="grid gap-12 md:gap-24 relative">
+                {/* Step 1 */}
                 <div className="grid md:grid-cols-2 items-center gap-6">
                   <div className="order-2 md:order-1">
                     <div className="space-y-4">
@@ -111,7 +122,7 @@ export default function Home() {
                   <div className="order-1 md:order-2 bg-white p-2 rounded-xl shadow-lg transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-video relative bg-gray-100 rounded-lg overflow-hidden">
                       <Image
-                        src="/img1.png?height=400&width=600"
+                        src="/img1.png"
                         width={600}
                         height={400}
                         alt="SOS Button"
@@ -126,7 +137,7 @@ export default function Home() {
                   <div className="bg-white p-2 rounded-xl shadow-lg transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-video relative bg-gray-100 rounded-lg overflow-hidden">
                       <Image
-                        src="/img2.png?height=400&width=600"
+                        src="/img2.png"
                         width={600}
                         height={400}
                         alt="Booking"
@@ -141,13 +152,15 @@ export default function Home() {
                       </div>
                       <h3 className="text-2xl font-bold text-gray-900">Book Instantly</h3>
                       <p className="text-gray-700">
-                         Once the emergency is reported, the nearest ambulance receives your request without any delays. 
-                         In <span className="font-medium text-gray-900">future</span> versions, AI will assist in assessing severity and prioritizing dispatch based on the situation.
+                        Once the emergency is reported, the nearest ambulance receives your request without any delays.
+                        In <span className="font-medium text-gray-900">future</span> versions, AI will assist in assessing
+                        severity and prioritizing dispatch based on the situation.
                       </p>
                     </div>
                   </div>
                 </div>
 
+                {/* Step 3 */}
                 <div className="grid md:grid-cols-2 items-center gap-6">
                   <div className="order-2 md:order-1">
                     <div className="space-y-4">
@@ -164,7 +177,7 @@ export default function Home() {
                   <div className="order-1 md:order-2 bg-white p-2 rounded-xl shadow-lg transform transition-all duration-500 hover:scale-105">
                     <div className="aspect-video relative bg-gray-100 rounded-lg overflow-hidden">
                       <Image
-                        src="/img3.png?height=400&width=600"
+                        src="/img3.png"
                         width={600}
                         height={400}
                         alt="Real-time Tracking"
@@ -196,7 +209,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-
             <TestimonialSlider />
           </div>
         </section>
@@ -205,13 +217,15 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col md:flex-row gap-8 items-center justify-between">
               <div className="space-y-4 max-w-xl">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-red-600">Ready to Save Lives?</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-red-600">
+                  Ready to Save Lives?
+                </h2>
                 <p className="text-gray-700 md:text-xl/relaxed">
                   Join Respondr today and be part of a network that's revolutionizing emergency response. Every second
                   counts.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Link href="/signup">
+                  <Link href="/onboarding">
                     <Button className="bg-red-600 text-white hover:bg-red-700 transition-transform hover:scale-105">
                       Get Started <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -231,7 +245,7 @@ export default function Home() {
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-red-300 rounded-full opacity-50"></div>
                 <div className="relative bg-white p-3 rounded-xl shadow-xl">
                   <Image
-                    src="/ready.png?height=400&width=400"
+                    src="/ready.png"
                     width={400}
                     height={400}
                     alt="Mobile app"
@@ -244,13 +258,19 @@ export default function Home() {
         </section>
       </main>
 
+      {/* ✅ FOOTER UPDATED */}
       <footer className="w-full border-t bg-white py-12">
         <div className="container px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="relative h-8 w-8 overflow-hidden rounded-full bg-red-600">
-                  <div className="absolute inset-0 flex items-center justify-center text-white font-bold">R</div>
+                <div className="relative h-8 w-8 overflow-hidden rounded-full">
+                  {/* ✅ Replaced R with same typography image */}
+                  <img
+                    src="/typography.jpg"
+                    alt="Logo"
+                    className="object-cover w-full h-full scale-110"
+                  />
                 </div>
                 <span className="text-xl font-bold text-red-600">Respondr</span>
               </div>
@@ -258,6 +278,7 @@ export default function Home() {
                 Revolutionizing emergency response with AI-powered technology and real-time tracking.
               </p>
             </div>
+            {/* Other Footer Sections remain same */}
             <div>
               <h3 className="font-medium text-gray-900 mb-3">Product</h3>
               <ul className="space-y-2">
@@ -320,7 +341,9 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center">
-            <p className="text-center text-sm text-gray-600 md:text-left">© 2025 Respondr. All rights reserved.</p>
+            <p className="text-center text-sm text-gray-600 md:text-left">
+              © 2025 Respondr. All rights reserved.
+            </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <Link href="https://www.facebook.com/profile.php?id=61580669720527" className="text-gray-600 hover:text-red-600 transition-colors">
                 <svg
