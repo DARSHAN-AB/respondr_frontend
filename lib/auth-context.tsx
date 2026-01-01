@@ -25,19 +25,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
+    const storedDriverId = localStorage.getItem("driverId");
     if (storedToken) {
       try {
         const payload = JSON.parse(atob(storedToken.split(".")[1]));
         console.log("Decoded JWT payload:", payload); // LOG THIS
         setUser({ userId: payload.user_id, role: payload.role });
-        setDriverId(payload.driver_id);
+        setDriverId(storedDriverId ? Number(storedDriverId) : null);
         setToken(storedToken);
         setIsAuthenticated(true);
         setAuthToken(storedToken);
       } catch (err) {
         console.error("Invalid token:", err);
         localStorage.removeItem("token");
+        localStorage.removeItem("driverId");
         setUser(null);
+        setDriverId(null);
         setToken(null);
         setIsAuthenticated(false);
       }
@@ -46,6 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (token: string, userId: number, role: string, driverId: number) => {
   localStorage.setItem("token", token);
+
+  if (driverId !== null) {
+    localStorage.setItem("driverId", String(driverId));
+  } else {
+    localStorage.removeItem("driverId");
+  }
+
   setAuthToken(token);
   setUser({ userId, role });
   setDriverId(driverId);
@@ -70,8 +80,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("driverId");
     setAuthToken(null);
     setUser(null);
+    setDriverId(null);
     setToken(null);
     setIsAuthenticated(false);
     toast.success("Logged out successfully!");
