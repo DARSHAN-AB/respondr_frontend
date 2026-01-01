@@ -204,7 +204,7 @@ export default function DriverVerificationPage() {
     // Debug authentication state
     console.log('Authentication state:', {
       user,
-      driverId,
+      driverId: localStorage.getItem('driverId'),
       token: localStorage.getItem('token'),
       tokenExists: !!localStorage.getItem('token'),
       timestamp: new Date().toISOString(),
