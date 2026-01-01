@@ -7,10 +7,9 @@ import { setAuthToken } from "@/lib/api";
 
 interface AuthContextType {
   user: { userId: number; role: string } | null;
-  driverId: number | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, userId: number, role: string, driverId: number) => void;
+  login: (token: string, userId: number, role: string) => void;
   logout: () => void;
 }
 
@@ -18,47 +17,34 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{ userId: number; role: string } | null>(null);
-  const [driverId, setDriverId] = useState<number | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const storedDriverId = localStorage.getItem("driverId");
     if (storedToken) {
       try {
         const payload = JSON.parse(atob(storedToken.split(".")[1]));
-        console.log("Decoded JWT payload:", payload); // LOG THIS
+        console.log("Decoded JWT payload:", payload); // ✅ LOG THIS
         setUser({ userId: payload.user_id, role: payload.role });
-        setDriverId(storedDriverId ? Number(storedDriverId) : null);
         setToken(storedToken);
         setIsAuthenticated(true);
         setAuthToken(storedToken);
       } catch (err) {
         console.error("Invalid token:", err);
         localStorage.removeItem("token");
-        localStorage.removeItem("driverId");
         setUser(null);
-        setDriverId(null);
         setToken(null);
         setIsAuthenticated(false);
       }
     }
   }, []);
 
-  const login = (token: string, userId: number, role: string, driverId: number) => {
+  const login = (token: string, userId: number, role: string) => {
   localStorage.setItem("token", token);
-
-  if (driverId !== null) {
-    localStorage.setItem("driverId", String(driverId));
-  } else {
-    localStorage.removeItem("driverId");
-  }
-
   setAuthToken(token);
   setUser({ userId, role });
-  setDriverId(driverId);
   setToken(token);
   setIsAuthenticated(true);
   toast.success("Logged in successfully!");
@@ -80,10 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("driverId");
     setAuthToken(null);
     setUser(null);
-    setDriverId(null);
     setToken(null);
     setIsAuthenticated(false);
     toast.success("Logged out successfully!");
@@ -91,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, driverId, token, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

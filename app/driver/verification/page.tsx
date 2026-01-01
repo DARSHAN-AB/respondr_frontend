@@ -15,7 +15,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 
 // Centralized API Base URL (Azure)
-const API_BASE_URL = "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api"
+const API_BASE_URL = "https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api"
 
 export default function DriverVerificationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,6 +24,7 @@ export default function DriverVerificationPage() {
   const [verificationStatus, setVerificationStatus] = useState<"not_submitted" | "pending" | "accepted" | "rejected">(
     "not_submitted"
   );
+  const [driverId, setDriverId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     licenseNumber: "",
     ambulanceRegistration: "",
@@ -32,8 +33,9 @@ export default function DriverVerificationPage() {
   const [idProofFile, setIdProofFile] = useState<File | null>(null);
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [previewUrls, setPreviewUrls] = useState<{ idProof?: string; license?: string }>({});
+
   const { toast } = useToast();
-  const { user, driverId } = useAuth();
+  const { user } = useAuth();
 
   // Fetch driverId and verification status on mount
   useEffect(() => {
@@ -59,32 +61,32 @@ export default function DriverVerificationPage() {
       }
 
       // Fetch driverId
-      // try {
-      //   console.log(`Fetching driverId for userId: ${user.userId}`);
-      //   const driverResponse = await fetch(`${API_BASE_URL}/driver-id/${user.userId}`);
-      //   const driverData = await driverResponse.json();
-      //   console.log('Driver ID response:', driverData);
+      try {
+        console.log(`Fetching driverId for userId: ${user.userId}`);
+        const driverResponse = await fetch(`${API_BASE_URL}/driver-id/${user.userId}`);
+        const driverData = await driverResponse.json();
+        console.log('Driver ID response:', driverData);
 
-      //   if (!driverResponse.ok) {
-      //     throw new Error(driverData.error || 'Failed to fetch driver ID');
-      //   }
+        if (!driverResponse.ok) {
+          throw new Error(driverData.error || 'Failed to fetch driver ID');
+        }
 
-      //   setDriverId(driverData.driverId);
-      // } catch (error) {
-      //   console.error('Error fetching driverId:', error);
-      //   setToastTrigger((prev) => prev + 1);
-      //   toast({
-      //     variant: "destructive",
-      //     title: "Error",
-      //     description: "No driver profile found for your account. Please contact support.",
-      //     duration: Infinity,
-      //     action: {
-      //       label: "Close",
-      //       onClick: () => {},
-      //     },
-      //   });
-      //   return;
-      // }
+        setDriverId(driverData.driverId);
+      } catch (error) {
+        console.error('Error fetching driverId:', error);
+        setToastTrigger((prev) => prev + 1);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No driver profile found for your account. Please contact support.",
+          duration: Infinity,
+          action: {
+            label: "Close",
+            onClick: () => {},
+          },
+        });
+        return;
+      }
 
       // Fetch verification status
       try {
@@ -204,7 +206,7 @@ export default function DriverVerificationPage() {
     // Debug authentication state
     console.log('Authentication state:', {
       user,
-      driverId: localStorage.getItem('driverId'),
+      driverId,
       token: localStorage.getItem('token'),
       tokenExists: !!localStorage.getItem('token'),
       timestamp: new Date().toISOString(),
