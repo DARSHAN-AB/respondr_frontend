@@ -27,7 +27,7 @@ import {
 
 // Replace localhost with your Azure API base URL
 const AZURE_BASE_URL =
-  "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net";
+  "https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net";
 
 export default function AdminVerificationRequestsPage() {
   const [verificationRequests, setVerificationRequests] = useState<any[]>([]);

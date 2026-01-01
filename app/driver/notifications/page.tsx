@@ -55,7 +55,7 @@ interface User {
 }
 
 // Centralized API Base URL (Azure)
-const API_BASE_URL = "https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api"
+const API_BASE_URL = "https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api"
 
 export default function DriverNotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -200,7 +200,7 @@ export default function DriverNotificationsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: user.userId,
-        emergencyId: reportId,  // ✅ send as integer
+        emergencyId: reportId,  // send as integer
       }),
     });
 
@@ -215,7 +215,7 @@ export default function DriverNotificationsPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        reportId,   // ✅ integer
+        reportId,   // integer
         action: "complete",
         arrivalTime: currentTime,
         completionTime: currentTime,
@@ -227,7 +227,7 @@ export default function DriverNotificationsPage() {
       throw new Error(errorData.error || "Failed to update dispatch record");
     }
 
-    // ✅ Update UI
+    // Update UI
     setNotifications((prev) =>
       prev.map((n) => (n.id === notificationId ? { ...n, status: "Completed" } : n))
     );
@@ -249,7 +249,7 @@ export default function DriverNotificationsPage() {
 
   const handleRejectJob = async (notificationId: string) => {
   try {
-    // 🔑 Extract integer reportId
+    // Extract integer reportId
     const reportId = parseInt(notificationId.replace(/^(sos-|booking-)/, ""));
     if (isNaN(reportId)) throw new Error("Invalid report ID format");
 
@@ -261,7 +261,7 @@ export default function DriverNotificationsPage() {
 
     if (!rejectResponse.ok) throw new Error("Failed to reject job");
 
-    // ✅ Update UI
+    // Update UI
     setNotifications((prev) =>
       prev.map((n) => (n.id === notificationId ? { ...n, status: "rejected" } : n))
     );

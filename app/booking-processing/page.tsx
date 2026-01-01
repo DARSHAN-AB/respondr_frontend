@@ -77,7 +77,7 @@ function BookingContent({
     const pollInterval = setInterval(async () => {
       try {
         const response = await fetch(
-          `https://respondrweb-server-adh7gwfubed0cyfy.centralindia-01.azurewebsites.net/api/booking/status/${reportId}`,
+          `https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api/booking/status/${reportId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

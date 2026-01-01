@@ -120,7 +120,7 @@ export default function ReportIncidentPage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          body: formData, // ✅ let browser set Content-Type
+          body: formData, // let browser set Content-Type
         }
       );
 
