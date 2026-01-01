@@ -7,9 +7,10 @@ import { setAuthToken } from "@/lib/api";
 
 interface AuthContextType {
   user: { userId: number; role: string } | null;
+  driverId: number | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (token: string, userId: number, role: string) => void;
+  login: (token: string, userId: number, role: string, driverId: number) => void;
   logout: () => void;
 }
 
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{ userId: number; role: string } | null>(null);
+  const [driverId, setDriverId] = useState<number | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
@@ -26,8 +28,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedToken) {
       try {
         const payload = JSON.parse(atob(storedToken.split(".")[1]));
-        console.log("Decoded JWT payload:", payload); // ✅ LOG THIS
+        console.log("Decoded JWT payload:", payload); // LOG THIS
         setUser({ userId: payload.user_id, role: payload.role });
+        setDriverId(payload.driver_id);
         setToken(storedToken);
         setIsAuthenticated(true);
         setAuthToken(storedToken);
@@ -41,10 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = (token: string, userId: number, role: string) => {
+  const login = (token: string, userId: number, role: string, driverId: number) => {
   localStorage.setItem("token", token);
   setAuthToken(token);
   setUser({ userId, role });
+  setDriverId(driverId);
   setToken(token);
   setIsAuthenticated(true);
   toast.success("Logged in successfully!");
@@ -75,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, driverId, token, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
