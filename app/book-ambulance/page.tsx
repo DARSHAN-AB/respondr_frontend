@@ -14,7 +14,7 @@ import { AnimatedSection } from '@/components/animated-section';
 import { useAuth } from '@/lib/auth-context';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const API_BASE = 'https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net';
+const API_BASE = 'https://respondr-cacvb0d8erabfmbd.centralindia-01.azurewebsites.net';
 
 const AZURE_API_BASE =
   process.env.NEXT_PUBLIC_API_URL ||

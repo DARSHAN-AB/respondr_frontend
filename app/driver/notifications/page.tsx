@@ -55,7 +55,7 @@ interface User {
 }
 
 // Centralized API Base URL (Azure)
-const API_BASE_URL = "https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api"
+const API_BASE_URL = "https://respondr-cacvb0d8erabfmbd.centralindia-01.azurewebsites.net/api"
 
 export default function DriverNotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])

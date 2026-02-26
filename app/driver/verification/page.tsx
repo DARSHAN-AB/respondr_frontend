@@ -15,7 +15,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 
 // Centralized API Base URL (Azure)
-const API_BASE_URL = "https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api"
+const API_BASE_URL = "https://respondr-cacvb0d8erabfmbd.centralindia-01.azurewebsites.net/api"
 
 export default function DriverVerificationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

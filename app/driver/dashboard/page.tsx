@@ -27,7 +27,7 @@ const MapView = dynamic(() => import("@/components/map-view").then((mod) => mod.
 })
 
 // Centralized API Base URL (Azure)
-const API_BASE_URL = "https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api"
+const API_BASE_URL = "https://respondr-cacvb0d8erabfmbd.centralindia-01.azurewebsites.net/api"
 
 export default function DriverDashboardPage() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)

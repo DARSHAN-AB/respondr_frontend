@@ -49,7 +49,7 @@ function ReportContent({ router, toast, token }: { router: any; toast: any; toke
   const maxErrorRetries = 5;
 
   // Replace localhost with your Azure API base URL
-  const API_BASE = 'https://respondr-web-server-afbybqe2edbyaqep.centralindia-01.azurewebsites.net/api';
+  const API_BASE = 'https://respondr-cacvb0d8erabfmbd.centralindia-01.azurewebsites.net/api';
 
   useEffect(() => {
     if (!reportId) {
